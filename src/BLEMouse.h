@@ -15,8 +15,8 @@ static char LOG_TAG[] = "BLEMouse";
 // HID input report data.
 typedef struct {
 	uint8_t buttons;
-    int8_t x;
-    int8_t y;
+    uint8_t x;
+    uint8_t y;
 } mouse_report_t;
  
 // HID report desc (mouse).
@@ -97,6 +97,8 @@ class BLEMouse {
 	BLEServer* pServer;
     BLECharacteristic* input;
     BLECharacteristic* output;
+    mouse_report_t report = {0,0,0};
+
 
 public:
 	bool isConnected = false;
@@ -135,8 +137,9 @@ public:
  
 	void sendReport(uint8_t buttons, int8_t x, int8_t y) {
 		if (isConnected) {
-            mouse_report_t report = {buttons,x,y};
-
+            report.buttons = buttons;
+            report.x = x;
+            report.y = y;
 			input->setValue((uint8_t*)&report, sizeof(mouse_report_t));
 			input->notify();
 		    Serial.print("*");

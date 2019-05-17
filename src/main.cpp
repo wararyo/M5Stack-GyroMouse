@@ -1,10 +1,10 @@
 #include <M5Stack.h>
 #include <M5StackUpdater.h>
-#include "utility/MPU9250.h"
+//#include "utility/MPU9250.h"
  
 #include "BLEMouse.h"
 
-MPU9250 IMU;
+//MPU9250 IMU;
  
 void setup() {
   M5.begin();
@@ -32,7 +32,7 @@ void setup() {
  
 void loop() {
   //delay(16);
-  if(!Mouse.isConnected) return;
+  //if(!Mouse.isConnected) return;
   M5.update();
 	if(M5.BtnA.isPressed()) {
     M5.Lcd.print("Left");
