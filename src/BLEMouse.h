@@ -71,18 +71,22 @@ class BLEMouse {
 public:
 	void begin() {
 		BLEDevice::init(DEVICE_NAME);
+        BLEDevice::setEncryptionLevel((esp_ble_sec_act_t)ESP_LE_AUTH_REQ_SC_BOND);
+
 		pServer = BLEDevice::createServer();
 		pServer->setCallbacks(new ServerCallbacks());
-	//	BLEDevice::setMTU(23);
+
 	 	hid = new BLEHIDDevice(pServer);
 		input = hid->inputReport(1);
         input->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
-        
+        input->addDescriptor(new BLE2902());
+
 		hid->manufacturer()->setValue(MANUFACTURER);
 		hid->pnp(0x02, 0xe502, 0xa111, 0x0210);
 		hid->hidInfo(0x00,0x01);  // country == 0, flags == 1 ( providing wake-up signal to a HID host)
 		hid->reportMap((uint8_t*)reportMap, sizeof(reportMap));
 		hid->startServices();
+        
 		BLEAdvertising *pAdvertising = pServer->getAdvertising();
 		pAdvertising->setAppearance(HID_KEYBOARD);
 		pAdvertising->addServiceUUID(hid->hidService()->getUUID());
