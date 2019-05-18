@@ -15,8 +15,8 @@ static char LOG_TAG[] = "BLEMouse";
 // HID input report data.
 typedef struct {
 	uint8_t buttons;
-    uint8_t x;
-    uint8_t y;
+    int8_t x;
+    int8_t y;
 } mouse_report_t;
  
 // HID report desc (mouse).
@@ -112,8 +112,6 @@ public:
 
 	 	hid = new BLEHIDDevice(pServer);
 		input = hid->inputReport(1);
-        input->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED | ESP_GATT_PERM_WRITE_ENCRYPTED);
-        input->addDescriptor(new BLE2902());
         output = hid->outputReport(1);
 
 		hid->manufacturer()->setValue(MANUFACTURER);
