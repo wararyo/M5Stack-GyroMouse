@@ -17,36 +17,39 @@ typedef struct {
 	uint8_t buttons;
     int8_t x;
     int8_t y;
+    int8_t wheel;
 } mouse_report_t;
  
 // HID report desc (mouse).
-const uint8_t reportMap[] = {
-    USAGE_PAGE(1), 			0x01,
-    USAGE(1), 				0x02,
-    COLLECTION(1),			0x01,
-    USAGE(1),				0x01,
-    COLLECTION(1),			0x00,
-    USAGE_PAGE(1),			0x09,
-    USAGE_MINIMUM(1),		0x1,
-    USAGE_MAXIMUM(1),		0x3,
-    LOGICAL_MINIMUM(1),	    0x0,
-    LOGICAL_MAXIMUM(1),	    0x1,
-    REPORT_COUNT(1),		0x3,
-    REPORT_SIZE(1),		    0x1,
-    HIDINPUT(1), 			0x2,		// (Data, Variable, Absolute), ;3 button bits
-    REPORT_COUNT(1),		0x1,
-    REPORT_SIZE(1),		    0x5,
-    HIDINPUT(1), 			0x1,		//(Constant), ;5 bit padding
-    USAGE_PAGE(1), 	        0x1,		//(Generic Desktop),
-    USAGE(1),				0x30,
-    USAGE(1),				0x31,
-    LOGICAL_MINIMUM(1),	    0x81,
-    LOGICAL_MAXIMUM(1),	    0x7f,
-    REPORT_SIZE(1),		    0x8,
-    REPORT_COUNT(1),		0x2,
-    HIDINPUT(1), 				0x6,		//(Data, Variable, Relative), ;2 position bytes (X & Y)
-    END_COLLECTION(0),
-    END_COLLECTION(0)
+const uint8_t reportMap[54] = { /* USB report descriptor, size must match usbconfig.h */
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x02,                    // USAGE (Mouse)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0x85, 0x01,                     //  REPORT_ID (1)
+    0x09, 0x01,                    //   USAGE (Pointer)
+    0xA1, 0x00,                    //   COLLECTION (Physical)
+    0x05, 0x09,                    //     USAGE_PAGE (Button)
+    0x19, 0x01,                    //     USAGE_MINIMUM
+    0x29, 0x03,                    //     USAGE_MAXIMUM
+    0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //     LOGICAL_MAXIMUM (1)
+    0x95, 0x03,                    //     REPORT_COUNT (3)
+    0x75, 0x01,                    //     REPORT_SIZE (1)
+    0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+    0x95, 0x01,                    //     REPORT_COUNT (1)
+    0x75, 0x05,                    //     REPORT_SIZE (5)
+    0x81, 0x03,                    //     INPUT (Const,Var,Abs)
+    0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
+    0x09, 0x30,                    //     USAGE (X)
+    0x09, 0x31,                    //     USAGE (Y)
+    0x09, 0x38,                    //     USAGE (Wheel)
+    0x15, 0x81,                    //     LOGICAL_MINIMUM (-127)
+    0x25, 0x7F,                    //     LOGICAL_MAXIMUM (127)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x03,                    //     REPORT_COUNT (3)
+    0x81, 0x06,                    //     INPUT (Data,Var,Rel)
+    0xC0,                          //   END_COLLECTION
+    0xC0,                          // END COLLECTION
 };
  
 class BLEMouse;
@@ -131,7 +134,7 @@ public:
 
 		pAdvertising->start();
 		Serial.println("Start Advertising.");
-        vTaskDelay(5000/portTICK_PERIOD_MS);
+        vTaskDelay(3000/portTICK_PERIOD_MS);
 	}
  
 	void sendReport(uint8_t buttons, int8_t x, int8_t y) {
@@ -139,9 +142,10 @@ public:
             report.buttons = buttons;
             report.x = x;
             report.y = y;
+            report.wheel = 0;
 			input->setValue((uint8_t*)&report, sizeof(mouse_report_t));
 			input->notify();
-		    vTaskDelay(16/portTICK_PERIOD_MS);
+		    vTaskDelay(20/portTICK_PERIOD_MS);
 		}
 	}
 };
