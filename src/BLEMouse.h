@@ -131,6 +131,7 @@ public:
 
 		pAdvertising->start();
 		Serial.println("Start Advertising.");
+        vTaskDelay(5000/portTICK_PERIOD_MS);
 	}
  
 	void sendReport(uint8_t buttons, int8_t x, int8_t y) {
@@ -140,7 +141,7 @@ public:
             report.y = y;
 			input->setValue((uint8_t*)&report, sizeof(mouse_report_t));
 			input->notify();
-		    Serial.print("*");
+		    vTaskDelay(16/portTICK_PERIOD_MS);
 		}
 	}
 };
