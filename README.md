@@ -5,8 +5,8 @@ This is a M5Stack app which makes it gyro-sensor mouse via Bluetooth Low Energy 
 
 ## Note
 
-Now this app has trouble with connecting function.
-When connect more than twice, please delete pairing from your PC.
+Now this app has trouble with connecting function.  
+When connecting more than twice, please delete pairing from your PC.
 
 It uses 1.3M byte of program memory.  
 If you use M5Stack 4MB-flash model, change the partition to "Huge App (3MB No OTA)".
