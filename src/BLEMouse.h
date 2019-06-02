@@ -4,7 +4,7 @@
 #include <BLEUtils.h>
 #include <BLE2902.h>
 #include <BLEHIDDevice.h>
-#include <Arduino.h>
+#include <M5Stack.h>
 #include <esp_log.h>
 
 #define DEVICE_NAME "M5StackMouse"
@@ -87,12 +87,12 @@ class BLEMouse {
     class ServerCallbacks: public BLEServerCallbacks {
         void onConnect(BLEServer* pServer) {
             Mouse.isConnected = true;
-            Serial.println("ServerCallbacks::onConnect()");
+            M5.Lcd.println("Connected.");
         };
 
         void onDisconnect(BLEServer* pServer) {
             Mouse.isConnected = false;
-            Serial.println("ServerCallbacks::onDisconnect()");
+            M5.Lcd.println("Disconnected.");
         }
     };
 

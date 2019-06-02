@@ -16,6 +16,11 @@ void setup() {
     ESP.restart();
   }
 
+  M5.Lcd.setTextSize(3);
+  M5.Lcd.println("BLEMouse");
+  M5.Lcd.setTextSize(2);
+  M5.Lcd.println("To calibrate, please\nboot with the BtnC pushed.");
+
   Serial.begin(9600);
   Mouse.begin();
   if (0x71 != IMU.readByte(MPU9250_ADDRESS, WHO_AM_I_MPU9250)) {
@@ -36,7 +41,7 @@ void setup() {
  
 void loop() {
   //delay(16);
-  //if(!Mouse.isConnected) return;
+  if(!Mouse.isConnected) return;
   M5.update();
 	// if(M5.BtnA.isPressed()) {
   //   M5.Lcd.print("Left");
@@ -52,7 +57,7 @@ void loop() {
     IMU.gx = (float)IMU.gyroCount[0]*IMU.gRes;
     IMU.gy = (float)IMU.gyroCount[1]*IMU.gRes;
     IMU.gz = (float)IMU.gyroCount[2]*IMU.gRes;
-    Mouse.sendReport(M5.BtnA.isPressed(),-(int8_t)(IMU.gy*0.6),-(int8_t)(IMU.gx * 0.6));
+    Mouse.sendReport(M5.BtnA.isPressed() | (M5.BtnC.isPressed() << 1),-(int8_t)(IMU.gy*0.6),-(int8_t)(IMU.gx * 0.6));
     //Serial.printf("%d %d %d \n",(int8_t)IMU.gx,(int8_t)IMU.gy,(int8_t)IMU.gz);
   }
 }
